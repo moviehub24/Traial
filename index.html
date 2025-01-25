@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple Image Upload and Display</title>
+</head>
+<body>
+
+  <h2>Upload Multiple Images</h2>
+
+  <input type="file" id="fileInput" multiple>
+  <button onclick="uploadImages()">Upload</button>
+
+  <div id="imageContainer"></div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const imageContainer = document.getElementById('imageContainer');
+
+    function uploadImages() {
+      const files = fileInput.files;
+
+      if (files.length === 0) {
+        alert("Please select at least one image.");
+        return;
+      }
+
+      imageContainer.innerHTML = ''; // Clear previous images
+
+      for (const file of files) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = file.name;
+          imageContainer.appendChild(img);
+
+          // Store image data in local storage (optional)
+          localStorage.setItem(`imageData_${file.name}`, e.target.result); 
+        };
+
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Load images from local storage on page load (optional)
+    window.onload = function() {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('imageData_')) { 
+          const img = document.createElement('img');
+          img.src = localStorage.getItem(key);
+          img.alt = key.replace('imageData_', ''); 
+          imageContainer.appendChild(img);
+            
+        }
+      }
+    };
+
+  </script>
+
+</body>
+</html>
